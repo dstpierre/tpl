@@ -89,6 +89,10 @@ type Template struct {
 // You should embed the templates in your program and pass the `embed.FS` to the
 // function.
 func Parse(fs embed.FS, funcMap map[string]any) (*Template, error) {
+	if funcMap == nil {
+		funcMap = make(map[string]any)
+	}
+
 	enhanceFuncMap(funcMap)
 
 	if err := loadTranslations(fs); err != nil {
