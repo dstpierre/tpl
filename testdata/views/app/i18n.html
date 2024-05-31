@@ -1,0 +1,12 @@
+{{define "content"}}
+
+<h1>{{ t .Lang "hello-world" }}</h1>
+
+<p>{{ tp .Lang "hello-people" 2 }}</p>
+
+<p>
+  <em>{{ shortdate .Locale .Data.Date }}</em><br />
+  <em>{{ currency .Locale .Data.Amount }}</em>
+</p>
+
+{{end}}

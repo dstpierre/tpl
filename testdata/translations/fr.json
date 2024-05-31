@@ -1,0 +1,12 @@
+[{
+	"key": "hello-world",
+	"value": "Allo tout le monde"
+}, {
+	"key": "hello-people",
+	"value": "Bonjour personne",
+	"plural": "Bonjour personnes"
+}, {
+	"key": "formatted",
+	"value": "Il y a %d personne.",
+	"plural": "Il y a %d personnes."
+}]

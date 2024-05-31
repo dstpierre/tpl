@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{block "title" .}} Logged in to app {{end}}</title>
+  </head>
+  <body>
+    {{template "nav" .}}
+
+    <main>{{block "content" .}}{{end}}</main>
+  </body>
+</html>
