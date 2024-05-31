@@ -220,7 +220,7 @@ There's also a `{{ shortdate .Locale .Data.CreatedAt }}` helper function which f
 
 You may have helper functions you'd like to pass to the templates. Here's how:
 
-``go
+```go
 package main
 
 import (
