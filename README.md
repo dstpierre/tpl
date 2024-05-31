@@ -2,7 +2,7 @@
 
 ![build badge](https://github.com/dstpierre/tpl/actions/workflows/test.yml/badge.svg)
 [![GoReportCard](https://goreportcard.com/badge/github.com/dstpierre/tpl)](https://goreportcard.com/report/github.com/dstpierre/tpl)
-[![Go Reference](https://pkg.go.dev/badge/github.com/dstpierre/tpl/backend.svg)](https://pkg.go.dev/github.com/staticbackendhq/core/backend)
+[![Go Reference](https://pkg.go.dev/badge/github.com/dstpierre/tpl.svg)](https://pkg.go.dev/github.com/dstpierre/tpl)
 
 
 > I was tired of having the same issues phase when starting a new web project with Go's `html/template`.
