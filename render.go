@@ -186,8 +186,11 @@ func getPaths(files []file) []string {
 }
 
 type PageData struct {
-	Lang   string
-	Locale string
+	Lang     string
+	Locale   string
+	Timezone string
+
+	XSRFToken string
 
 	Title       string
 	CurrentUser any
