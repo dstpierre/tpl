@@ -102,17 +102,25 @@ Here's the fields of the `tpl.PageData`:
 
 ```go
 type PageData struct {
-  Lang   string
-  Locale string
+  Lang     string
+  Locale   string
+  Timezone string
+  XSRFToken string
   Title       string
   CurrentUser any
   Data        any
+  Extra       any
+  Env string
 }
 ```
 
 `Lang` and `Locale` are useful if you want to use the i18n feature.
 
 `CurrentUser` is handy if you want to let your templates know about the current user.
+
+`Env` is useful if your system has multiple environment, like dev, staging, prod and you'd want to do different things based on the env. I personally use if to have a non-minified JavaScript bundle in dev and staging, while a minified one in prod.
+
+`Extra` can be useful for anything that your views need that's not present in the main `Data` field.
 
 `Title` is also helpful to set the page title, you can have this in your layout templates:
 

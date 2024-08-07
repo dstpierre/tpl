@@ -30,7 +30,7 @@
 //	var templ *tpl.Template
 //
 //	func main() {
-//	  templ, err := tpl.Parse(fs)
+//	  templ, err := tpl.Parse(fs, nil)
 //	}
 //
 // And you need to use the `PageData` structure to render a template.
@@ -195,6 +195,9 @@ type PageData struct {
 	Title       string
 	CurrentUser any
 	Data        any
+	Extra       any
+
+	Env string
 }
 
 // Render renders a template from a [layout]/[page.html].
