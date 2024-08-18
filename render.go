@@ -153,7 +153,7 @@ func Parse(fs embed.FS, funcMap map[string]any) (*Template, error) {
 	}
 
 	for _, ef := range emailFiles {
-		t, err := template.New(ef.name).Funcs(funcMap).ParseFiles(ef.fullPath)
+		t, err := template.New(ef.name).Funcs(funcMap).ParseFS(fs, ef.fullPath)
 		if err != nil {
 			return nil, err
 		}
