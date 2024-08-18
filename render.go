@@ -72,7 +72,6 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"os"
 	"path"
 	"path/filepath"
 	"strings"
@@ -176,10 +175,7 @@ func load(fs embed.FS, dir ...string) ([]file, error) {
 
 	fullDir := path.Join(dir...)
 
-	ok, err := exists(fullDir)
-	if err != nil {
-		return nil, err
-	} else if !ok {
+	if ok := exists(fs, fullDir); !ok {
 		return nil, nil
 	}
 
@@ -254,13 +250,11 @@ func (templ *Template) RenderEmail(w io.Writer, email string, data any) error {
 }
 
 // exists returns whether the given file or directory exists
-func exists(path string) (bool, error) {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true, nil
+func exists(fs embed.FS, path string) bool {
+	f, err := fs.Open(path)
+	if err != nil {
+		return false
 	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return false, err
+	f.Close()
+	return true
 }
