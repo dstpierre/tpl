@@ -75,3 +75,25 @@ func TestAppLayoutNav(t *testing.T) {
 		t.Errorf("can't find func map in body: %s", body)
 	}
 }
+
+func TestRenderEmail(t *testing.T) {
+	type EmailData struct {
+		Link string
+	}
+
+	data := EmailData{Link: "https://verify.com"}
+
+	templ := load(t)
+
+	var buf bytes.Buffer
+	if err := templ.RenderEmail(&buf, "verify_en.txt", data); err != nil {
+		t.Fatal(err)
+	}
+
+	body := buf.String()
+	if !strings.Contains(body, "https://verify.com") {
+		t.Errorf("can't find verify link in email body: %s", body)
+	} else if !strings.Contains(body, "func map") {
+		t.Errorf("can't find func map in body: %s", body)
+	}
+}

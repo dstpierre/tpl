@@ -1,0 +1,7 @@
+Please verify your email at:
+
+{{.Link}}
+
+This template can use custom function
+
+{{ abc }}

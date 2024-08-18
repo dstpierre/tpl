@@ -72,6 +72,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"os"
 	"path"
 	"path/filepath"
 	"strings"
@@ -79,8 +80,9 @@ import (
 
 // Template holds the file system and the parsed views.
 type Template struct {
-	FS    embed.FS
-	Views map[string]*template.Template
+	FS     embed.FS
+	Views  map[string]*template.Template
+	Emails map[string]*template.Template
 }
 
 // Parse parses and load the layouts, templates, partials, and optionally the
@@ -130,8 +132,6 @@ func Parse(fs embed.FS, funcMap map[string]any) (*Template, error) {
 				view.fullPath,
 			}
 
-			//fmt.Println("DEBUG: ", layout.fullPath, view.fullPath)
-
 			patterns = append(patterns, getPaths(partials)...)
 
 			t, err := tf.ParseFS(
@@ -146,7 +146,23 @@ func Parse(fs embed.FS, funcMap map[string]any) (*Template, error) {
 		}
 	}
 
-	templ := &Template{FS: fs, Views: views}
+	emails := make(map[string]*template.Template)
+
+	emailFiles, err := load(fs, config.TemplateRootName, "emails")
+	if err != nil {
+		return nil, err
+	}
+
+	for _, ef := range emailFiles {
+		t, err := template.New(ef.name).Funcs(funcMap).ParseFiles(ef.fullPath)
+		if err != nil {
+			return nil, err
+		}
+
+		emails[ef.name] = t
+	}
+
+	templ := &Template{FS: fs, Views: views, Emails: emails}
 	return templ, nil
 }
 
@@ -159,6 +175,13 @@ func load(fs embed.FS, dir ...string) ([]file, error) {
 	var files []file
 
 	fullDir := path.Join(dir...)
+
+	ok, err := exists(fullDir)
+	if err != nil {
+		return nil, err
+	} else if !ok {
+		return nil, nil
+	}
 
 	//TODO: might be an idea to un-hardcode the paths and have options
 	allFiles, err := fs.ReadDir(fullDir)
@@ -212,4 +235,32 @@ func (templ *Template) Render(w io.Writer, view string, data PageData) error {
 	}
 
 	return v.Execute(w, data)
+}
+
+// RenderEmail renders the email found in the templates/emails directory.
+//
+// You may create language specific templates and html and text version
+// as follow: templates/emails/verify_en.html, templates/emails/verify_fr.txt, etc.
+//
+// Note that this execution does not use the PageData struct, but the data
+// passed directly.
+func (templ *Template) RenderEmail(w io.Writer, email string, data any) error {
+	e, ok := templ.Emails[email]
+	if !ok {
+		return errors.New("can't find emailw: " + email)
+	}
+
+	return e.Execute(w, data)
+}
+
+// exists returns whether the given file or directory exists
+func exists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
 }
