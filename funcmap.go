@@ -38,4 +38,13 @@ func addHelperFunctions(fmap map[string]any) {
 
 		return m
 	}
+
+	fmap["iterate"] = func(max uint) []uint {
+		l := make([]uint, max)
+		var idx uint
+		for idx = 0; idx < max; idx++ {
+			l[idx] = idx
+		}
+		return l
+	}
 }
