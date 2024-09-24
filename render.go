@@ -68,10 +68,13 @@ package tpl
 
 import (
 	"embed"
+	"encoding/gob"
 	"errors"
 	"fmt"
 	"html/template"
 	"io"
+	"log/slog"
+	"os"
 	"path"
 	"path/filepath"
 	"strings"
@@ -162,6 +165,20 @@ func Parse(fs embed.FS, funcMap map[string]any) (*Template, error) {
 	}
 
 	templ := &Template{FS: fs, Views: views, Emails: emails}
+
+	if config.EnableStaticAnalysis && len(config.StaticAnalysisFile) > 0 {
+		f, err := os.Create(config.StaticAnalysisFile)
+		if err != nil {
+			slog.Error(
+				"opening file for writing",
+				"FILE", config.StaticAnalysisFile,
+				"ERR", err,
+			)
+			return templ, nil
+		}
+		defer f.Close()
+		writeAST(templ, f)
+	}
 	return templ, nil
 }
 
@@ -257,4 +274,32 @@ func exists(fs embed.FS, path string) bool {
 	}
 	f.Close()
 	return true
+}
+
+func writeAST(templ *Template, w io.Writer) {
+	m := make(map[string][]string)
+	for name, t := range templ.Views {
+		for _, st := range t.Templates() {
+			//TODO: "content" should be from Config
+			if st.Name() == "content" {
+				m[name] = extractTemplateField(name, st.Tree)
+				continue
+			}
+
+			if _, ok := m[st.Name()]; !ok {
+				m[st.Name()] = extractTemplateField(st.Name(), st.Tree)
+			}
+		}
+	}
+
+	//gob.Register(map[string]any{})
+
+	if err := gob.NewEncoder(w).Encode(m); err != nil {
+		slog.Error(
+			"writing template AST",
+			"FILE", config.StaticAnalysisFile,
+			"ERR", err,
+		)
+		return
+	}
 }

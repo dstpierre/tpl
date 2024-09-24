@@ -6,6 +6,7 @@ func enhanceFuncMap(fmap map[string]any) {
 	addTranslationFunctions(fmap)
 	addInternationalizationFunctions(fmap)
 	addHelperFunctions(fmap)
+	addStaticAnalysisFunction(fmap)
 }
 
 func addTranslationFunctions(fmap map[string]any) {
@@ -46,5 +47,11 @@ func addHelperFunctions(fmap map[string]any) {
 			l[idx] = idx
 		}
 		return l
+	}
+}
+
+func addStaticAnalysisFunction(fmap map[string]any) {
+	fmap["tpltype"] = func(types ...string) string {
+		return ""
 	}
 }

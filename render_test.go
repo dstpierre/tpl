@@ -20,7 +20,11 @@ var fmap map[string]any = map[string]any{
 }
 
 func load(t *testing.T) *tpl.Template {
-	opts := tpl.Option{TemplateRootName: "testdata"}
+	opts := tpl.Option{
+		TemplateRootName:     "testdata",
+		EnableStaticAnalysis: true,
+		StaticAnalysisFile:   "testdata/.tpl.tree",
+	}
 	tpl.Set(opts)
 
 	templ, err := tpl.Parse(fsTest, fmap)

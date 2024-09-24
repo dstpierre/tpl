@@ -1,0 +1,5 @@
+{{define "content"}} {{tpltype "MyDataType" "User"}} {{.Ok}}
+<br />
+{{/* data:MyDataType user:User */}}
+<p>Using a wrong field name: {{.Data.ShouldError}}</p>
+{{end}}
