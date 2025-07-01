@@ -204,6 +204,14 @@ func getPaths(files []file) []string {
 	return p
 }
 
+type Notification struct {
+	Title     template.HTML
+	Message   template.HTML
+	IsSuccess bool
+	IsError   bool
+	IsWarning bool
+}
+
 type PageData struct {
 	Lang     string
 	Locale   string
@@ -213,6 +221,7 @@ type PageData struct {
 
 	Title       string
 	CurrentUser any
+	Alert       *Notification
 	Data        any
 	Extra       any
 
@@ -224,7 +233,7 @@ type PageData struct {
 // The layout should not have the .html, so if you have 2 layouts one name
 // layout.html and one named app.html, a template named "dashboard.html" in the
 // app layout would be named: app/dashboard.html.
-func (templ *Template) Render(w io.Writer, view string, data PageData) error {
+func (templ *Template) Render(w io.Writer, view string, data any) error {
 	v, ok := templ.Views[view]
 	if !ok {
 		return errors.New("can't find view: " + view)
