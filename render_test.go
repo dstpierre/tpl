@@ -32,9 +32,10 @@ func load(t *testing.T) *tpl.Template {
 }
 
 type pagedata struct {
-	Text   string
-	Date   time.Time
-	Amount float64
+	Text    string
+	Date    time.Time
+	Amount  float64
+	Numbers []int64
 }
 
 func render(t *testing.T, templ *tpl.Template, view string) string {
@@ -42,7 +43,12 @@ func render(t *testing.T, templ *tpl.Template, view string) string {
 		Lang:   "fr",
 		Locale: "fr-CA",
 		Title:  "unit-test",
-		Data:   pagedata{Text: "unit-test", Date: time.Now(), Amount: 1234.56},
+		Data: pagedata{
+			Text:    "unit-test",
+			Date:    time.Now().Add(-5 * time.Minute),
+			Amount:  1234.56,
+			Numbers: []int64{12321, 3, 4, 2},
+		},
 	}
 	var buf bytes.Buffer
 	if err := templ.Render(&buf, view, data); err != nil {

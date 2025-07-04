@@ -1,20 +1,27 @@
 // package tpl handles structuring, parsing, and rendering of HTML templates.
-// It adds translations and internationalization functions.
+// It adds helpers, translations and internationalization functions.
 //
 // You must adopt the following structure for your templates:
+// Create a directory named "templates" and create the following structure.
 //
-//	templates/_partials
+// templates/emails
+//
+//	templates/partials
 //	templates/views/layout-name/page-name.html
 //	templates/translations/en.json
 //	templates/layout-name.html
 //
-// Inside your layout files you define blocks that are filled from the view.
-// For example:
+// You create your base layouts at the root of the templates directory.
+//
+// Each layout must have a views/[layout_name_without_html] directory.
+//
+// Inside your layout files you define blocks that are filled from the views.
+// For example, in your layout:
 //
 //	<title>{{ block "title" . }}</title>
 //	<main>{{ block "content" .}}</main>
 //
-// And inside your view inside the /templates/views/[layout name]/[view name].html:
+// And inside your view in the templates/views/[layout name]/[view name].html:
 //
 //	{{define "title"}}Title from the view{{end}}
 //	{{define "content"}}
@@ -24,7 +31,7 @@
 // You'll need to call the `Parse` function when your program starts and
 // provide a `embed.FS` for your templates.
 //
-//	//go:embed templates/*
+//	//go:embed templates
 //	var fs embed.FS
 //
 //	var templ *tpl.Template
@@ -33,7 +40,7 @@
 //	  templ, err := tpl.Parse(fs, nil)
 //	}
 //
-// And you need to use the `PageData` structure to render a template.
+// When rendering a view you can optionally use the `PageData` structure or your own.
 //
 //	func hello(w http.ResponseWriter, r *http.Request) {
 //	  data := tpl.PageData{
@@ -55,7 +62,7 @@
 //	  "plural": "optional if plural is needed",
 //	}]
 //
-// There's four different template function helpers:
+// There's four different template function relative to translation:
 //
 // 1. {{ t .Lang "a unique key" }}
 //
@@ -100,7 +107,7 @@ func Parse(fs embed.FS, funcMap map[string]any) (*Template, error) {
 		return nil, err
 	}
 
-	partials, err := load(fs, config.TemplateRootName, "_partials")
+	partials, err := load(fs, config.TemplateRootName, "partials")
 	if err != nil {
 		return nil, err
 	}
@@ -176,6 +183,12 @@ func load(fs embed.FS, dir ...string) ([]file, error) {
 	fullDir := path.Join(dir...)
 
 	if ok := exists(fs, fullDir); !ok {
+		if strings.HasSuffix(fullDir, "partials") {
+			fmt.Println("tpl: obsolete name '_partials' must be changed to 'partials'.")
+			dir[len(dir)-1] = "_partials"
+			return load(fs, dir...)
+		}
+
 		return nil, nil
 	}
 
@@ -252,7 +265,7 @@ func (templ *Template) Render(w io.Writer, view string, data any) error {
 func (templ *Template) RenderEmail(w io.Writer, email string, data any) error {
 	e, ok := templ.Emails[email]
 	if !ok {
-		return errors.New("can't find emailw: " + email)
+		return errors.New("can't find email: " + email)
 	}
 
 	return e.Execute(w, data)

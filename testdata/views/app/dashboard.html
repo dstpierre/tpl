@@ -6,4 +6,14 @@
 
 <h3>Using custom function</h3>
 <p>{{ abc }}</p>
+
+Built-in directives:
+{{xsrf "xsrf-token-here"}}
+
+{{ "ok test   123" | cut " " }}
+{{ .CurrentUser | default "no user set" }}
+{{ 1234.0 | filesize }}
+{{ "a title that -- do have -"  | slugify }}
+{{ index .Data.Numbers 0 | intcomma }}
+{{ .Data.Date | naturaltime }}
 {{end}}

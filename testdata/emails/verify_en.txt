@@ -5,3 +5,7 @@ Please verify your email at:
 This template can use custom function
 
 {{ abc }}
+
+And also all built-in functions:
+
+{{ "ok this is nice" | cut " " }}
