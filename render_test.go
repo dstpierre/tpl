@@ -103,3 +103,13 @@ func TestRenderEmail(t *testing.T) {
 		t.Errorf("can't find func map in body: %s", body)
 	}
 }
+
+func TestRenderDataContent(t *testing.T) {
+	templ := load(t)
+	x, err := templ.GetDataContent("sample.md")
+	if err != nil {
+		t.Fatal(err)
+	} else if string(x) != "# Test Title" {
+		t.Errorf("reading data content got %s", string(x))
+	}
+}

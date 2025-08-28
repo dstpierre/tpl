@@ -280,3 +280,8 @@ func exists(fs embed.FS, path string) bool {
 	f.Close()
 	return true
 }
+
+// GetDataContent returns the content of file in the data directory
+func (templ *Template) GetDataContent(filename string) ([]byte, error) {
+	return templ.FS.ReadFile(path.Join(config.TemplateRootName, "data", filename))
+}
