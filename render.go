@@ -183,7 +183,9 @@ func load(fs embed.FS, dir ...string) ([]file, error) {
 	fullDir := path.Join(dir...)
 
 	if ok := exists(fs, fullDir); !ok {
-		if strings.HasSuffix(fullDir, "partials") {
+		if strings.HasSuffix(fullDir, "_partials") {
+			fmt.Println("tpl: You must have a `partials` directory created")
+		} else if strings.HasSuffix(fullDir, "partials") {
 			fmt.Println("tpl: obsolete name '_partials' must be changed to 'partials'.")
 			dir[len(dir)-1] = "_partials"
 			return load(fs, dir...)
