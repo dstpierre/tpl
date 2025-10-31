@@ -52,6 +52,16 @@ func main() {
 		}
 	}
 
+	codeKeys, err := extractFromCode()
+	if err != nil {
+		fmt.Println("error while parsing your Go code", err)
+		return
+	}
+
+	for _, key := range codeKeys {
+		allKeys[key] = struct{}{}
+	}
+
 	msgs, err := parseTargetFile(rootPath, lang)
 	if err != nil {
 		fmt.Println(err)
@@ -67,6 +77,12 @@ func main() {
 	for key := range allKeys {
 		if _, ok := langKeys[key]; !ok {
 			msgs = append(msgs, tpl.Text{Key: key})
+		}
+	}
+
+	for idx, msg := range msgs {
+		if _, ok := allKeys[msg.Key]; !ok {
+			msgs[idx].IsObsolete = true
 		}
 	}
 

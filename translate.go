@@ -13,6 +13,7 @@ type Text struct {
 	Key         string `json:"key"`
 	Value       string `json:"value"`
 	PluralValue string `json:"plural"`
+	IsObsolete  bool   `json:"obsolete,omitempty"`
 }
 
 var messages map[string]Text
